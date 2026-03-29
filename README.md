@@ -196,23 +196,6 @@ Understand whether delays are driven by:
 
 ---
 
-## 📁 Project Structure
-
-```bash
-Flight-Delay-Forecasting-System/
-│
-├── README.md
-├── flight_delay_forecasting.ipynb
-├── data/
-│   └── flight_delay_data.csv
-├── outputs/
-│   ├── figures/
-│   └── models/
-└── requirements.txt
-```
-
----
-
 ## 🚀 How to Run
 
 1. Clone the repository:
