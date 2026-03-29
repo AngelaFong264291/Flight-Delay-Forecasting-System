@@ -2,184 +2,174 @@
 
 ## 📌 Project Overview
 
-This project develops a **macro-level predictive forecasting system** for U.S. commercial flight delays. Instead of predicting whether an individual flight will be delayed, the system forecasts the **average delay minutes per flight** for a specific airline at a specific airport in a given month.
+This repository contains an end-to-end data science project that forecasts **macro-level U.S. commercial flight delays**.
 
-The goal is to support **strategic decision-making** in the aviation industry by anticipating delay severity in advance.
+The system predicts the **average delay minutes per flight** for a specific airline at a specific airport in a given month, serving as a **strategic planning tool** for aviation stakeholders.
 
----
-
-## 🌍 Background & Context
-
-Flight delays are a major operational challenge in the aviation industry, costing airlines billions of dollars annually and negatively impacting customer satisfaction.
-
-While delays can be triggered by unpredictable events such as weather or mechanical issues, **macro-level trends**—including seasonal weather patterns, airport congestion, and airline-specific inefficiencies—can be modeled using historical data.
-
-This project leverages these patterns to provide **forward-looking delay forecasts**.
+The final **CatBoost Regressor** model achieves a **Mean Absolute Error (MAE) of ≈ 5.8 minutes**, demonstrating strong predictive performance and real-world applicability.
 
 ---
 
-## 🎯 Project Objective
+## 💡 Key Results & Visualizations
 
-The objective of this project is to build a **machine learning forecasting model** that predicts:
+### 📊 Model Performance Comparison
 
-> **Average delay minutes per flight**
-> for a given airline, airport, and month.
+CatBoost consistently outperformed other models (XGBoost, LightGBM), achieving the lowest error.
 
-This shifts the focus from:
-
-* ❌ "Will a specific flight be delayed?"
-
-To:
-
-* ✅ "How severe will delays be at a system level?"
-
----
-
-## 📊 Dataset
-
-### Source
-
-U.S. Bureau of Transportation Statistics (BTS)
-
-### Data Scope
-
-* **Timeframe:** August 2013 – August 2023
-* **Granularity:** Year, Month, Carrier, Airport
-* **Type:** Monthly aggregated airline performance data
-
-### Features Included
-
-* Number of arriving flights (`arr_flights`)
-* Total arrival delay minutes (`arr_delay`)
-* Delays over 15 minutes
-* Cancellation counts
-* Diversion counts
-* Delay causes:
-
-  * Carrier delays
-  * Weather delays
-  * NAS (National Airspace System)
-  * Security delays
-  * Late aircraft delays
-
----
-
-## 🎯 Target Variable
-
-The model predicts:
-
-```text
-Average Delay Minutes per Flight = arr_delay / arr_flights
+```md
+![Model Comparison](images/mae_comparison.png)
 ```
 
-### Why this metric?
+---
 
-* Normalizes delay across airports of different sizes
-* Avoids bias toward large hub airports
-* Provides a **clear, interpretable measure of delay severity**
+### 📈 Feature Importance
 
-### Interpretation
+The model is primarily driven by:
 
-> "On average, how many minutes of delay should be expected per flight?"
+* **12-month lag feature** → captures seasonality
+* **3-month rolling average** → captures recent trends
+
+```md
+![Feature Importance](images/feature_importance.png)
+```
 
 ---
 
-## 🧠 Methodology
+## 🚀 Getting Started
 
-### Workflow
+### ✅ Option 1: Run the Interactive Web App (Recommended)
 
-1. Data Cleaning & Preprocessing
-2. Exploratory Data Analysis (EDA)
-3. Feature Engineering
-4. Target Variable Creation
-5. Model Training
-6. Model Evaluation
-7. Forecasting & Interpretation
+```bash
+git clone https://github.com/AngelaFong264291/Flight-Delay-Forecasting-System.git
+cd Flight-Delay-Forecasting-System
+pip install -r requirements.txt
+streamlit run app.py
+```
 
----
-
-## 🤖 Model Selection
-
-Multiple models were evaluated, including:
-
-* XGBoost
-* LightGBM
-* CatBoost
-
-### ✅ Final Model:
-
-**CatBoost Regressor**
-
-Chosen for its:
-
-* Strong performance on tabular data
-* Ability to handle categorical variables
-* Robust generalization
+👉 Your browser will open an interactive dashboard where you can generate predictions.
 
 ---
 
-## 📈 Model Performance
+### 📓 Option 2: Run the Jupyter Notebook
 
-* **Metric:** Mean Absolute Error (MAE)
-* **Test Period:** 2022–2023
-* **Final MAE:** **≈ 5.8 minutes**
+```bash
+jupyter notebook
+```
 
-### Interpretation
+Open:
 
-On average, the model’s prediction error is **less than 6 minutes per flight**.
+```
+flight_predict.ipynb
+```
+
+This contains:
+
+* full EDA
+* feature engineering
+* model training process
 
 ---
 
-## 🔍 Real-World Case Study
+## ⚙️ Methodology & Technical Details
 
-**Airline:** Delta Airlines (DL)
-**Airport:** Atlanta (ATL)
-**Month:** July 2022
+### 1. 📊 Data Source & Target Variable
 
-* Predicted Delay: **12.27 minutes**
-* Actual Delay: **14.13 minutes**
-* Error: **1.86 minutes**
+* **Source:** U.S. Bureau of Transportation Statistics (BTS)
+* **Timeframe:** Aug 2013 – Aug 2023
 
-### 💡 Insight
+**Target Variable:**
 
-The model provides **highly accurate early warnings**, enabling airlines to prepare for operational stress in advance.
+```text
+Average Delay Minutes per Flight = total_arr_delay / total_arr_flights
+```
+
+✔ Normalizes across airport size
+✔ Provides a clear delay severity metric
+
+---
+
+### 2. 🧠 Feature Engineering
+
+#### Cyclical Features
+
+* Month → transformed using sine & cosine
+
+#### Lag Features
+
+* 1-month lag → recent performance
+* 12-month lag → seasonal patterns
+
+#### Rolling Features
+
+* 3-month rolling average → short-term trend
+* 6-month rolling average → long-term trend
+
+---
+
+### 3. 🦠 Handling COVID-19 Anomaly
+
+* Created feature: `is_covid_era`
+* Covers: March 2020 – Dec 2021
+* Helps model isolate abnormal behavior
+
+---
+
+### 4. 🤖 Model Training & Evaluation
+
+* **Train Set:** up to Dec 2021
+* **Test Set:** Jan 2022 – Aug 2023
+* **Models Compared:**
+
+  * XGBoost
+  * LightGBM
+  * CatBoost
+
+✅ **Best Model:** CatBoost
+📉 **MAE:** ≈ 5.8 minutes
+
+---
+
+## 📂 Repository Structure
+
+```bash
+Flight-Delay-Forecasting-System/
+│
+├── app.py
+├── flight_predict.ipynb
+├── airline_delay.csv
+├── flight_delay_data_cleaned.csv
+├── catboost_flight_delay_model.joblib
+├── images/
+│   ├── mae_comparison.png
+│   └── feature_importance.png
+└── README.md
+```
 
 ---
 
 ## 💼 Business Value
 
-### 1. Resource Optimization
+This forecasting system provides actionable insights for the aviation industry:
+
+### ✈️ Resource Optimization
 
 * Adjust staffing levels in advance
-* Improve airport operations planning
+* Improve operational efficiency
 
-### 2. Airline Benchmarking
+### 📊 Strategic Scheduling
 
-* Compare performance across airlines
-* Identify operational inefficiencies
+* Add buffer time during high-delay periods
+* Reduce cascading delays
 
-### 3. Strategic Scheduling
+### 🏆 Airline Benchmarking
 
-* Add buffer time for high-delay periods
-* Reduce disruptions
+* Compare airline performance
+* Identify inefficiencies
 
-### 4. Root-Cause Insights
+### 😊 Passenger Experience
 
-Understand whether delays are driven by:
-
-* Weather
-* Airline operations
-* Airspace congestion
-* Late aircraft
-
----
-
-## 🔑 Key Insights
-
-* Delay patterns are **predictable at a macro level**
-* Seasonal trends significantly impact delays
-* Airline-airport combinations behave differently
-* Machine learning enables **actionable forecasting**
+* Reduce delays proactively
+* Improve satisfaction
 
 ---
 
@@ -187,54 +177,9 @@ Understand whether delays are driven by:
 
 * Python
 * Jupyter Notebook
-* Pandas
-* NumPy
+* Pandas & NumPy
 * Matplotlib / Seaborn
 * Scikit-learn
-* CatBoost
-* XGBoost / LightGBM
-
----
-
-## 🚀 How to Run
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/AngelaFong264291/Flight-Delay-Forecasting-System.git
-```
-
-2. Navigate to the folder:
-
-```bash
-cd Flight-Delay-Forecasting-System
-```
-
-3. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-4. Open Jupyter Notebook:
-
-```bash
-jupyter notebook
-```
-
----
-
-## 📌 Conclusion
-
-This project demonstrates that **historical aviation data can be transformed into accurate, actionable forecasts**.
-
-With an MAE of approximately **5.8 minutes**, the model provides meaningful insights into future delay conditions.
-
-More importantly, it serves as a **strategic tool** that helps aviation stakeholders:
-
-* anticipate operational challenges
-* optimize resources
-* improve efficiency
-* enhance passenger experience
-
+* CatBoost, XGBoost, LightGBM
+* Streamlit
 
