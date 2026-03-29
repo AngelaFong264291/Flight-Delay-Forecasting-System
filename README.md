@@ -254,14 +254,4 @@ More importantly, it serves as a **strategic tool** that helps aviation stakehol
 * improve efficiency
 * enhance passenger experience
 
----
 
-## 👤 Author
-
-**Angela Fong**
-
----
-
-## 📄 License
-
-This project is for educational and analytical purposes.
